@@ -1,0 +1,43 @@
+Structuring a FastAPI Project:
+my_fastapi_project/	
+├── app/	
+│   ├── __init__.py
+│   ├── main.py             #The entry point of the FastAPI application
+│   ├── dependencies.py	    #Contains shared dependencies like database sessions
+│   ├── routers/	        #Handels API endpoints (request - response)
+│   │   ├── __init__.py	
+│   │   ├── users.py
+│   │   └── items.py	
+│   ├── internal/	        #Contains internal, non-public endpoints (admin panel,...)
+│   │   ├── __init__.py	
+│   │   └── admin.py	
+│   ├── core/	            #Holds configurations and security setting
+│   │   ├── __init__.py	
+│   │   ├── config.py	
+│   │   └── security.py	
+│   ├── models/	            #SQLAlchemy models
+│   │   ├── __init__.py	
+│   │   ├── user.py	
+│   │   └── item.py	
+│   ├── schemas/	        #Pydantic models (validate data)
+│   │   ├── __init__.py	
+│   │   ├── user.py	
+│   │   └── item.py	
+│   ├── services/	        #Contains business logic (hash password, check exist user, ...)
+│   │   ├── __init__.py	
+│   │   ├── user_service.py	
+│   │   └── item_service.py	
+│   └── db/	                #Connect database (engine, sessionLocal, dependency get_db())
+│       ├── __init__.py	
+│       ├── database.py	
+│       └── migrations/	    #Manage version database (update schema, rollback)
+├── tests/	
+│   ├── __init__.py	
+│   ├── test_main.py	
+│   ├── test_users.py	
+│   ├── test_items.py	
+├── .env	
+├── .gitignore	
+├── requirements.txt	
+├── README.md	
+└── run.sh	
