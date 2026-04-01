@@ -1,29 +1,14 @@
-from fastapi import HTTPException
-from typing import Optional
-
+from app.core.security import verify_password
 from app.models.user import User
 from sqlalchemy.orm import Session
-from app.schemas.user_schema import UserCreate
 
-def create_user(db: Session, user: UserCreate) -> Optional[User]:
-    try:
-        user = User(**user.model_dump())
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-        return user
-    except Exception as e:
-        db.rollback()
+def authenticate_user(db: Session, email: str, password: str):
+    user = db.query(User).filter(User.email == email).one_or_none()
 
-        error_msg = str(e.orig)
+    if not user:
+        return None
 
-        if "users.username" in error_msg:
-            raise HTTPException(409, "Username already exists")
+    if not verify_password(password, user.password):
+        return None
 
-        if "users.email" in error_msg:
-            raise HTTPException(409, "Email already exists")
-
-        raise HTTPException(status_code=500, detail="can not create user-service: " + str(e))
-
-def get_user_by_username(db: Session, username: str) -> Optional[User]:
-    return db.query(User).filter(User.username == username).one_or_none()
+    return user

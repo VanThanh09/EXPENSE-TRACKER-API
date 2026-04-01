@@ -1,0 +1,26 @@
+1. Cấu hình security
+ - Tạo SECRECT_KEY (tự tạo), ALGORITHM (thuật toán mã hóa), TOKEN_EXPIRE
+ - Hash and verify passowrd
+ - Encode - Decode token
+
+2. Tạo các Pydantic models
+ - UserLogin
+ - Token
+
+3. Authenticate user - service:
+ - Tìm username từ input
+ - Verify password
+ - Trả về user -> ấy user để encode token -> từ token có thể tìm user
+
+4. Lấy user từ token - dependency:
+ - Decode token
+ - Lấy user theo token -> user
+
+5. Thêm login endpoint - router:
+ - Kiểm tra auth user -> đúng
+ - Trả token
+
+6. Thêm API cần chứng thực ...
+
+Login: POST users/login -> router (login) -> service - authenticate_user (security - verify) -> security - create_access_token -> client - access_token
+API: client -> router (/me) -> dependency (get_current_user) -> router(get_my_profile) -> security (decode_token) -> current_user -> router
