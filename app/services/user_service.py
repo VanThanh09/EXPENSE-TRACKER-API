@@ -34,6 +34,18 @@ def create_user(db: Session, user_data):
 
 def update_user(user: User, update_data, db: Session):
     f_update_data = update_data.dict(exclude_unset=True) # delete the key have none value
+    print(f_update_data)
+
+    if f_update_data.get('email') and user.email != f_update_data['email']:
+
+        existing_email = db.query(User).filter(User.email == f_update_data['email']).one_or_none()
+
+        if existing_email:
+            raise HTTPException(status_code=400, detail="Email already registered")
+
+    if f_update_data.get('password'):
+        hash_pw = security.hash_password(f_update_data['password'])
+        f_update_data['password'] = hash_pw
 
     for key, value in f_update_data.items():
         setattr(user, key, value)

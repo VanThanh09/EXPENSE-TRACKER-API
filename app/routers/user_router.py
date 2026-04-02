@@ -39,5 +39,11 @@ def get_my_profile(current_user = Depends(get_current_user)):
 
 @router.patch("/my_profile", response_model=UserResponse)
 def update_my_profile(update_data: UserUpdate, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
-    pass
+    try:
+        user = update_user(current_user, update_data, db)
+        return user
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
