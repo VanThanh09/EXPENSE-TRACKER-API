@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 from typing import Optional, List
 
 
@@ -25,10 +25,17 @@ class UserCreate(BaseModel):
     name: str
     email: str
     password: str
+    confirm_password: str
     avatar: Optional[str] = None
 
     def get_avatar(self):
         return self.avatar if self.avatar else "https://res.cloudinary.com/drzc4fmxb/image/upload/v1733907010/xvethjfe9cycrroqi7po.jpg"
+
+    @model_validator(mode="after")
+    def check_passwords(self):
+        if self.password != self.confirm_password:
+            raise ValueError("Passwords do not match")
+        return self
 
 
 class UserUpdate(BaseModel):

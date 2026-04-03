@@ -2,7 +2,7 @@ from datetime import datetime
 
 from app.core.database import Base
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean, Text
-from sqlalchemy.orm import Relationship
+from sqlalchemy.orm import relationship
 
 
 class User(Base):
@@ -25,7 +25,7 @@ class Blog(Base):
     is_published = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, default=datetime.now)
 
-    author = Relationship('User', backref='blogs', lazy=True)
+    author = relationship('User', backref='blogs', lazy=True)
     author_id = Column(Integer, ForeignKey('user.id'), nullable=False)
 
 
@@ -35,8 +35,8 @@ class BlogImage(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     url = Column(Text, nullable=False)
 
-    blog_id = Column(Integer, ForeignKey('blog.id'), nullable=False)
-    blog = Relationship('Blog', backref='images', lazy=True)
+    blog_id = Column(Integer, ForeignKey('blog.id', ondelete='CASCADE'), nullable=False)
+    blog = relationship('Blog', backref='images', lazy=True, passive_deletes=True)
 
 
 class Comment(Base):
@@ -47,10 +47,10 @@ class Comment(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.now)
 
     user_id = Column(Integer, ForeignKey('user.id'))
-    user = Relationship('User', backref='comments', lazy=True)
+    user = relationship('User', backref='comments', lazy=True)
 
     blog_id = Column(Integer, ForeignKey('blog.id'))
-    blog = Relationship('Blog', backref='comments', lazy=True)
+    blog = relationship('Blog', backref='comments', lazy=True)
 
 
 class Follow(Base):
@@ -60,8 +60,8 @@ class Follow(Base):
     follower_id = Column(Integer, ForeignKey('user.id')) # người đi follow
     following_id = Column(Integer, ForeignKey('user.id')) # người được follow
 
-    following = Relationship('User', backref='following', lazy=True, foreign_keys=[follower_id]) # list user mình follow
-    follower = Relationship('User', backref='my_follower', lazy=True, foreign_keys=[following_id]) # list user follow mình
+    following = relationship('User', backref='following', lazy=True, foreign_keys=[follower_id]) # list user mình follow
+    follower = relationship('User', backref='my_follower', lazy=True, foreign_keys=[following_id]) # list user follow mình
 
 
 class Like(Base):
@@ -71,8 +71,8 @@ class Like(Base):
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     blog_id = Column(Integer, ForeignKey('blog.id'), nullable=False)
 
-    user = Relationship('User', backref='likes', lazy=True)
-    blog = Relationship('Blog', backref='likes', lazy=True)
+    user = relationship('User', backref='likes', lazy=True)
+    blog = relationship('Blog', backref='likes', lazy=True)
 
 
 class Notification(Base):
@@ -85,4 +85,4 @@ class Notification(Base):
     target_id = Column(Integer, default=0)
 
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
-    user = Relationship('User', backref='notifications', lazy=True)
+    user = relationship('User', backref='notifications', lazy=True)
