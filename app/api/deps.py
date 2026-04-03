@@ -14,7 +14,7 @@ def get_db():
     finally:
         db.close()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token") # get token from header
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/toke") # get token from header
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
     payload = decode_token(token)

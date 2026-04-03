@@ -13,6 +13,7 @@ class User(Base):
     email = Column(String(50), unique=True)
     password = Column(String(255), nullable=False)
     is_active = Column(Boolean, default=True)
+    is_superuser = Column(Boolean, default=False)
     avatar = Column(String(150), default='https://res.cloudinary.com/drzc4fmxb/image/upload/v1733907010/xvethjfe9cycrroqi7po.jpg')
 
 

@@ -5,6 +5,7 @@ from app.core.security import create_access_token, TOKEN_EXPIRES
 from app.api.deps import get_db, get_current_user
 from app.schemas import Token, UserLogin, UserResponse, UserCreate, UserUpdate
 from app.crud import create_user, update_user, authenticate_user
+from app.worker.tasks import send_email_welcome
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -12,6 +13,10 @@ router = APIRouter(prefix="/users", tags=["users"])
 def register(user: UserCreate, db: Session = Depends(get_db)):
     try:
         new_user = create_user(db, user)
+        try:
+            send_email_welcome.delay(user.email)
+        except Exception as e:
+            print("Celery error:", e)
         return new_user
     except HTTPException:
         raise
